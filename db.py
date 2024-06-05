@@ -1,4 +1,5 @@
 import abc
+from flask import Flask
 from peewee import *
 import datetime
 from logger import ILogger
@@ -26,14 +27,26 @@ class UserSchema(Schema):
 
 @inject
 class DatabaseProvider():
-    def __init__(self, logger: ILogger, AppConfig) -> None:
+    def __init__(self, logger: ILogger, AppConfig, app: Flask) -> None:
         self.schemas = {}
+        self.app = app
         self.db = MySQLDatabase(AppConfig['DB_NAME'], host=AppConfig['DB_HOST'],
                                 port=int(AppConfig['DB_PORT']), user=AppConfig['DB_USER'], password=AppConfig['DB_PASS'])
         self.db.bind([User])
         logger.info("Database initialized")
         self.schemas['user'] = UserSchema()
         self.schemas['users'] = UserSchema(many=True)
+
+    def register_hooks(self):
+        def _db_connect():
+            self.db.connect()
+
+        def _db_close(exc):
+            if not self.db.is_closed():
+                self.db.close()
+
+        self.app.before_request(_db_connect)
+        self.app.teardown_request(_db_close)
 
 
 if __name__ == "__main__":

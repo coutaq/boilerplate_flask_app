@@ -1,6 +1,9 @@
 import datetime
+from http.client import HTTPException
 import re
 import os
+import traceback
+from flask import jsonify
 import jwt
 
 
@@ -26,5 +29,6 @@ def generate_token(user_id):
         "user_id": user_id,
         "exp": datetime.datetime.utcnow() + datetime.timedelta(days=30),
     }
-    token = jwt.encode(token_payload, os.getenv("JWT_TOKEN_SECRET"), algorithm="HS256")
+    token = jwt.encode(token_payload, os.getenv(
+        "JWT_TOKEN_SECRET"), algorithm="HS256")
     return token
