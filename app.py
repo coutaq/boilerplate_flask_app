@@ -118,5 +118,6 @@ def upload_file():
 
 
 if __name__ == "__main__":
+    # pass
     logger.info("Starting debug server...")
     app.run(debug=True, port=app_config.get("APP_PORT"))

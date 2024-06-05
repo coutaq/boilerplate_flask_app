@@ -7,8 +7,6 @@ from playhouse.shortcuts import ReconnectMixin
 from kink import inject
 
 
-
-
 class User(Model):
     id = AutoField()
     login = TextField()
@@ -17,6 +15,7 @@ class User(Model):
     password = TextField()
     token = TextField(null=True)
     created_at = DateTimeField(default=datetime.datetime.now)
+
 
 class UserSchema(Schema):
     email = fields.String()
@@ -32,9 +31,10 @@ class DatabaseProvider():
         self.db = MySQLDatabase(AppConfig['DB_NAME'], host=AppConfig['DB_HOST'],
                                 port=int(AppConfig['DB_PORT']), user=AppConfig['DB_USER'], password=AppConfig['DB_PASS'])
         self.db.bind([User])
-        logger.debug("Database initialized")
+        logger.info("Database initialized")
         self.schemas['user'] = UserSchema()
         self.schemas['users'] = UserSchema(many=True)
+
 
 if __name__ == "__main__":
     from bootstrap import bootstrap_di

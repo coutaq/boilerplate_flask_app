@@ -28,7 +28,7 @@ class SimpleAuthServiceProvider(IAuthServiceProvider):
     def __init__(self, logger: ILogger, databaseProvider: DatabaseProvider) -> None:
         self.logger = logger
         self.db = databaseProvider
-        self.logger.debug("AuthService started")
+        self.logger.info("AuthService started")
 
     def get_user_from_token(self, token: str) -> User | bool:
         if token:
@@ -84,3 +84,7 @@ class SimpleAuthServiceProvider(IAuthServiceProvider):
             user.token = generate_token(user.id)
             user.save()
         return None, user
+
+
+class TelegramAuthServiceProvider:
+    pass
